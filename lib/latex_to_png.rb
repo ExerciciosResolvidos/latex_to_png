@@ -8,7 +8,7 @@ require "latex_to_png/version"
 #sudo apt-get install imagemagick libmagickcore-dev
 
 module LatexToPng
-
+  ROOT_LIB = File.dirname __FILE__
   class Convert
   		attr_accessor :dirname , :filename, :basename, :png_file
 
@@ -20,8 +20,7 @@ module LatexToPng
 
 
   		def to_png
-  			debugger
-      		@png_file =  open(%x(. lib/shell/convert.sh #{@filename}))
+      		@png_file =  open(%x(bash #{ROOT_LIB}/shell/convert.sh #{@filename}))
     	end  
 
     	private
