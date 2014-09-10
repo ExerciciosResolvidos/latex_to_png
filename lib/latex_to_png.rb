@@ -1,51 +1,73 @@
 require "latex_to_png/version"
+require 'tempfile'
+
+
 
 #precisa do programa texi2dvi
 #sudo apt-get install texinfo
-#e depois
+#e depois o Latex
 #sudo apt-get install texlive
 # e depois iamgeMagik com extensão para dev, para a gem rmagik
 #sudo apt-get install imagemagick libmagickcore-dev
+# begin
+#     if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed."; exit 1; })
+#       raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev'"
+#     end
+#     if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed."; exit 1; })
+#       raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive'"
+#     end
+#     if %x(hash dvips 2>/dev/null || { echo >&2 "I require dvips but it's not installed."; exit 1; })
+#       raise RuntimeError,"You need install dvips dependency. Run 'sudo apt-get install texinfo'"
+#     end
+# rescue Exception => e
+#     puts e
+#     # raise Gem::Installer::ExtensionBuildError 
+# end
 
 module LatexToPng
-  if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed.  Aborting."; exit 1; }) == 1
-    raise "You need install ImageMagick dependency."
-    abt = true
+  
+
+
+  ROOT_LIB = File.dirname __FILE__
+
+
+  class Convert
+
+		attr_accessor :dirname , :filename, :basename, :png_file, :template_path
+
+		def initialize opts={ filename: nil, formula: nil, template_path: nil }
+      
+      @filename = opts[:filename]  if opts[:filename]
+			@basename = File.basename opts[:filename].split(".")[0] if opts[:filename]
+			@dirname =  File.dirname opts[:filename]  if opts[:filename]
+
+      @template_path = opts[:template_path] if opts[:template_path]
+      @formula = opts[:formula] if opts[:formula]
+		end
+
+		def to_png
+      if @formula
+        
+        doc = ERB.new(File.read("#{ROOT_LIB}/templates/equation.erb"))
+        doc = doc.result(@formula.send(:binding))
+        tmp_file = Tempfile.new("formula")
+        tmp_file.write doc
+        tmp_file.close
+        # debugger
+        @filename = tmp_file.path
+      else
+        @filename
+  	  end
+      @png_file = open(%x(bash #{ROOT_LIB}/shell/convert.sh #{@filename}))
+
+    end  
+
+  	private
+  	
+  	def move_to_dir
+  		"cd #{@dirname}"
+  	end 
+
   end
-  if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed.  Aborting."; exit 1; }) == 1
-    raise "You need install latex dependency."
-    abt = true
-  end
-  if %x(hash dvips 2>/dev/null || { echo >&2 "I require dvips but it's not installed.  Aborting."; exit 1; }) == 1
-    raise "You need install dvips dependency."
-    abt = true
-  end
-  # abort
-  if abt
-    abort
-  end
-
-
-    ROOT_LIB = File.dirname __FILE__
-    class Convert
-    		attr_accessor :dirname , :filename, :basename, :png_file
-
-    		def initialize filename
-    			@filename = filename
-    			@basename = File.basename filename.split(".")[0]
-    			@dirname =  File.dirname filename
-    		end
-
-
-    		def to_png
-        		@png_file =  open(%x(bash #{ROOT_LIB}/shell/convert.sh #{@filename}))
-      	end  
-
-      	private
-      	
-      	def move_to_dir
-      		"cd #{@dirname}"
-      	end 
-  	end
 end
 

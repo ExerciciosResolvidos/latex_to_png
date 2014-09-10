@@ -8,7 +8,7 @@ describe "" do
 
 	it "dirname do arquivo" do 
 	
-		image = LatexToPng::Convert.new("#{ROOT_DIR_SPEC}/support/flux.tex")
+		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
 		
 		expect(image.dirname).to eq "#{ROOT_DIR_SPEC}/support"
 		expect(image.basename).to eq "flux"
@@ -18,7 +18,14 @@ describe "" do
 
 	it "dirname do arquivo" do 
 	
-		image = LatexToPng::Convert.new("#{ROOT_DIR_SPEC}/support/flux.tex")
+		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+		image = image.to_png
+		expect(image.class).to eq File
+	end
+
+	it "formula com usando template" do 
+	
+		image = LatexToPng::Convert.new(formula: "\\frac{a}{b}")
 		image = image.to_png
 		expect(image.class).to eq File
 	end
