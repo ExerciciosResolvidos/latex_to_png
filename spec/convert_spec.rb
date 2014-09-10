@@ -23,6 +23,13 @@ describe "" do
 		expect(image.class).to eq File
 	end
 
+	it "dirname do arquivo com \\cancel" do 
+	
+		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/cancel_example.tex")
+		image = image.to_png
+		expect(image.class).to eq File
+	end
+	
 	it "formula com usando template" do 
 	
 		image = LatexToPng::Convert.new(formula: "\\frac{a}{b}")

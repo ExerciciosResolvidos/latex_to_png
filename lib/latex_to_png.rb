@@ -9,20 +9,20 @@ require 'tempfile'
 #sudo apt-get install texlive
 # e depois iamgeMagik com extensão para dev, para a gem rmagik
 #sudo apt-get install imagemagick libmagickcore-dev
-# begin
-#     if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed."; exit 1; })
-#       raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev'"
-#     end
-#     if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed."; exit 1; })
-#       raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive'"
-#     end
-#     if %x(hash dvips 2>/dev/null || { echo >&2 "I require dvips but it's not installed."; exit 1; })
-#       raise RuntimeError,"You need install dvips dependency. Run 'sudo apt-get install texinfo'"
-#     end
-# rescue Exception => e
-#     puts e
-#     # raise Gem::Installer::ExtensionBuildError 
-# end
+begin
+    if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed."; exit 1; })
+      raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev'"
+    end
+    if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed."; exit 1; })
+      raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive'"
+    end
+    if %x(hash dvips 2>/dev/null || { echo >&2 "I require dvips but it's not installed."; exit 1; })
+      raise RuntimeError,"You need install dvips dependency. Run 'sudo apt-get install texinfo'"
+    end
+rescue Exception => e
+    puts e
+    # raise Gem::Installer::ExtensionBuildError 
+end
 
 module LatexToPng
   
