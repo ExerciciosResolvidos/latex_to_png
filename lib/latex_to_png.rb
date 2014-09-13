@@ -1,5 +1,6 @@
 require "latex_to_png/version"
 require 'tempfile'
+require "erb"
 
 
 
@@ -11,7 +12,7 @@ require 'tempfile'
 #sudo apt-get install imagemagick libmagickcore-dev
 begin
     if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed."; exit 1; })
-      raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev'"
+      raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev texlive-latex-extra'"
     end
     if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed."; exit 1; })
       raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive'"
@@ -47,7 +48,6 @@ module LatexToPng
 
 		def to_png
       if @formula
-        
         doc = ERB.new(File.read("#{ROOT_LIB}/templates/equation.erb"))
         doc = doc.result(@formula.send(:binding))
         tmp_file = Tempfile.new("formula")
