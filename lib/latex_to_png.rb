@@ -12,10 +12,10 @@ require "erb"
 #sudo apt-get install imagemagick libmagickcore-dev
 begin
     if %x(hash convert 2>/dev/null || { echo >&2 "I require ImageMagick but it's not installed."; exit 1; })
-      raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev texlive-latex-extra'"
+      raise RuntimeError,"You need install ImageMagick dependency. Run 'sudo apt-get install imagemagick libmagickcore-dev'"
     end
     if %x(hash latex 2>/dev/null || { echo >&2 "I require latex but it's not installed."; exit 1; })
-      raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive'"
+      raise RuntimeError,"You need install latex dependency. Run 'sudo apt-get install texlive texlive-latex-extra'"
     end
     if %x(hash dvips 2>/dev/null || { echo >&2 "I require dvips but it's not installed."; exit 1; })
       raise RuntimeError,"You need install dvips dependency. Run 'sudo apt-get install texinfo'"
