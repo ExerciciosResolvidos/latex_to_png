@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   spec.requirements << "dvips"
   spec.requirements << "imageMagik"
 
-  spec.add_dependency 'rmagick'
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
 end
