@@ -64,8 +64,8 @@ module LatexToPng
     basename = @filename.gsub(".tex",'')
 
     %x(cd #{dirname}; latex #{@filename} >> convert.log)
-    %x(cd #{dirname}; dvips -q #{name}.dvi  >> convert.log)
-    %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{basename}.png  >> convert.log)
+    %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert.log)
+    %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert.log)
     %x(cd #{dirname}; rm #{name}.dvi #{name}.log #{name}.aux #{name}.ps convert.log)
     
     @png_file = open(@filename.gsub("flex","png"))
