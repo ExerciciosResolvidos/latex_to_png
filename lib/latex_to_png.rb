@@ -58,7 +58,17 @@ module LatexToPng
       else
         @filename
   	  end
-      @png_file = open(%x(bash #{ROOT_LIB}/shell/convert.sh #{@filename}))
+
+    name = @filename.split("/").last.split(".").first 
+    basename = @filename.gsub(".tex",'')
+
+    %x(latex #{@filename} >> convert.log)
+    %x(dvips -q #{name}.dvi  >> convert.log)
+    %x(convert -density 200x200 #{name}.ps #{basename}.png  >> convert.log)
+    %x(rm #{name}.dvi #{name}.log #{name}.aux #{name}.ps convert.log)
+    
+    @png_file = open(@filename.gsub("flex","png"))
+
 
     end  
 

@@ -3,7 +3,7 @@ require "spec_helper"
 describe "" do 
 
 	after(:each) do
-		`rm #{ROOT_DIR_SPEC}/support/flux.png`
+		%x(rm #{ROOT_DIR_SPEC}/support/*.png)
 	end
 
 	it "dirname do arquivo" do 

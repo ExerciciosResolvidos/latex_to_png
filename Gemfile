@@ -4,5 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 
-#gem 'byebug'
-# gem 'rspec'
+gem 'byebug'
+gem 'rspec'
