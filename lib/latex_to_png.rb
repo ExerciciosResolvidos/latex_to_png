@@ -59,16 +59,15 @@ module LatexToPng
         @filename
   	  end
 
-    name = @filename.split("/").last.split(".").first 
-    dirname =  File.dirname @filename
-    basename = @filename.gsub(".tex",'')
+      name = @filename.split("/").last.split(".").first 
+      dirname =  File.dirname @filename
+      basename = @filename.gsub(".tex",'')
 
-    %x(cd #{dirname}; latex #{@filename} >> convert.log)
-    %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert.log)
-    %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert.log)
-    %x(cd #{dirname}; rm #{name}.dvi #{name}.log #{name}.aux #{name}.ps convert.log)
-    
-    @png_file = open(@filename.gsub("flex","png"))
+      %x(cd #{dirname}; latex #{@filename} >> convert.log)
+      %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert.log)
+      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert.log)
+      %x(cd #{dirname}; rm #{name}.dvi #{name}.log #{name}.aux #{name}.ps convert.log)
+      @png_file = open("#{@filename.gsub(/.tex$/,"")}.png")
 
 
     end  

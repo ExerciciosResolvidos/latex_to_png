@@ -21,21 +21,64 @@ describe "" do
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
 		image = image.to_png
 		expect(image.class).to eq File
+
+		File.delete image.path
 	end
 
 	it "dirname do arquivo com \\cancel" do 
 	
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/cancel_example.tex")
 		image = image.to_png
+
 		expect(image.class).to eq File
+		File.delete image.path
+
 	end
 	
-	it "formula com usando template" do 
-	
-		image = LatexToPng::Convert.new(formula: "\\frac{a}{b}")
-		image = image.to_png
-		expect(image.class).to eq File
+	context "formula com usando template" do
+
+		it "fração simples" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\frac{a}{b}")
+			image = image.to_png
+
+			expect(image.class).to eq File
+			expect(File.exist? image).to eq true
+			
+			File.delete image.path
+		end
+
+		it "fração com \\cdot" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\frac{a}{b}\\cdot\\frac{b}{a}")
+			image = image.to_png
+
+			expect(image.class).to eq File
+			expect(File.exist? image).to eq true
+
+			File.delete image.path
+		end
+
+		it "fração com \\cdot e espaços" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\frac{a}{b} \\cdot \\frac{b}{a}")
+			image = image.to_png
+
+			expect(image.class).to eq File
+			expect(File.exist? image).to eq true
+
+			File.delete image.path
+		end
+
+		it "fração com \\cdot e espaços e tab" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\frac{a}{b} 		\\cdot 		\\frac{b}{a}")
+			image = image.to_png
+
+			expect(image.class).to eq File
+			expect(File.exist? image).to eq true
+
+			File.delete image.path
+		end
 	end
-
-
 end
