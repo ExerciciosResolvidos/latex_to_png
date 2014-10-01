@@ -25,6 +25,8 @@ rescue Exception => e
     # raise Gem::Installer::ExtensionBuildError 
 end
 
+require "latex_to_png/sizes"
+
 module LatexToPng
   
 
@@ -35,6 +37,10 @@ module LatexToPng
   class Convert
 
 		attr_accessor :dirname , :filename, :basename, :png_file, :template_path
+
+    def size_in_points size_in_pixels
+      Sizes.invert[size_in_pixels]
+    end
 
 		def initialize opts={ filename: nil, formula: nil, template_path: nil }
       

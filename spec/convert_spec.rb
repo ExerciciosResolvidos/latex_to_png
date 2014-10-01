@@ -6,6 +6,16 @@ describe "" do
 		# %x(rm #{ROOT_DIR_SPEC}/support/*.png)
 	end
 
+
+	it "convert size de pixels para pontos" do 
+	
+		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+		
+		expect(image.size_in_points("12px")).to eq "9pt"
+
+
+	end
+	
 	it "dirname do arquivo" do 
 	
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
