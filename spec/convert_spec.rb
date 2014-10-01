@@ -15,6 +15,15 @@ describe "" do
 
 	end
 
+	it "convert.size_in_points de pixels para pontos arredondadndo" do 
+	
+		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+		
+		expect(image.size_in_points("18px")).to eq "14pt"
+
+	end
+
+
 	it "dirname do arquivo" do 
 	
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")

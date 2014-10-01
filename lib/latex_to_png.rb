@@ -40,7 +40,13 @@ module LatexToPng
 		attr_accessor :dirname , :filename, :basename, :png_file, :template_path
 
     def size_in_points size_in_pixels
-      Sizes.invert[size_in_pixels]
+      size = Sizes.invert[size_in_pixels]
+      if size.nil?
+        size_in_points "#{size_in_pixels.to_i + 1}px"
+
+      else
+        size
+      end
     end
 
 		def initialize opts={ filename: nil, formula: nil, template_path: nil, size_in_pixels: nil }
