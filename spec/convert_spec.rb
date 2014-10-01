@@ -44,7 +44,7 @@ describe "" do
 
 			expect(image.class).to eq File
 			expect(File.exist? image).to eq true
-			
+
 			File.delete image.path
 		end
 
@@ -80,5 +80,12 @@ describe "" do
 
 			File.delete image.path
 		end
+
+		it "insstrução inexistente como \\blabla" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\blabla")
+			expect{image.to_png}.to raise_error
+		end
+
 	end
 end
