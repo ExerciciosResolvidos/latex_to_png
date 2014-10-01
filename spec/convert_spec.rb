@@ -6,20 +6,23 @@ describe "" do
 		# %x(rm #{ROOT_DIR_SPEC}/support/*.png)
 	end
 
-
-	it "convert.size_in_points de pixels para pontos" do 
-	
-		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+	context "convert.size_in_points" do
+		it "com valor exato" do 
 		
-		expect(image.size_in_points("12px")).to eq "9pt"
+			image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+			
+			expect(image.size_in_points("12px")).to eq "9pt"
 
-	end
+		end
 
-	it "convert.size_in_points de pixels para pontos arredondadndo" do 
-	
-		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+		it "com valor inexato pontos arredondadndo" do 
 		
-		expect(image.size_in_points("18px")).to eq "14pt"
+			image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
+			
+			expect(image.size_in_points("18px")).to eq "14pt"
+
+		end
+
 
 	end
 
