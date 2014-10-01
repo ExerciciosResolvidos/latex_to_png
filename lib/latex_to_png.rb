@@ -1,6 +1,7 @@
 require "latex_to_png/version"
 require 'tempfile'
 require "erb"
+require 'ostruct'
 
 
 
@@ -42,11 +43,17 @@ module LatexToPng
       Sizes.invert[size_in_pixels]
     end
 
-		def initialize opts={ filename: nil, formula: nil, template_path: nil }
+		def initialize opts={ filename: nil, formula: nil, template_path: nil, size_in_pixels: nil }
       
       @filename = opts[:filename]  if opts[:filename]
 			@basename = File.basename opts[:filename].split(".")[0] if opts[:filename]
 			@dirname =  File.dirname opts[:filename]  if opts[:filename]
+      if opts[:size_in_pixels].nil?
+        @size_in_pixels = "12pt"
+      else
+        @size_in_pixels = size_in_points(opts[:size_in_pixels])
+      end
+      
 
       @template_path = opts[:template_path] if opts[:template_path]
       @formula = opts[:formula] if opts[:formula]
@@ -55,7 +62,9 @@ module LatexToPng
 		def to_png
       if @formula
         doc = ERB.new(File.read("#{ROOT_LIB}/templates/equation.erb"))
-        doc = doc.result(@formula.send(:binding))
+        infos = OpenStruct.new({formula: @formula, size: @size_in_pixels })
+        doc = doc.result(infos.instance_eval { binding })
+        
         tmp_file = Tempfile.new("formula")
         tmp_file.write doc
         tmp_file.close
@@ -71,7 +80,7 @@ module LatexToPng
 
       %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert_#{name}.log)
       %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert_#{name}.log)
-      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert_#{name}.log)
+      %x(cd #{dirname}; convert #{name}.ps #{name}.png  >> convert_#{name}.log)
       %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux #{name}.ps)
       png_path = "#{@filename.gsub(/.tex$/,"")}.png"
 

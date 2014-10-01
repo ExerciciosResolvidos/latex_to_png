@@ -7,15 +7,14 @@ describe "" do
 	end
 
 
-	it "convert size de pixels para pontos" do 
+	it "convert.size_in_points de pixels para pontos" do 
 	
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
 		
 		expect(image.size_in_points("12px")).to eq "9pt"
 
-
 	end
-	
+
 	it "dirname do arquivo" do 
 	
 		image = LatexToPng::Convert.new(filename: "#{ROOT_DIR_SPEC}/support/flux.tex")
@@ -89,6 +88,17 @@ describe "" do
 			expect(File.exist? image).to eq true
 
 			File.delete image.path
+		end
+
+		it "fração com tamanho de fonte" do 
+		
+			image = LatexToPng::Convert.new(formula: "\\frac{a}{b}", size_in_pixels: "19px")
+			image = image.to_png
+
+			expect(image.class).to eq File
+			expect(File.exist? image).to eq true
+
+			# File.delete image.path
 		end
 
 		it "insstrução inexistente como \\blabla" do 
