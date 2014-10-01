@@ -55,7 +55,7 @@ module LatexToPng
 			@basename = File.basename opts[:filename].split(".")[0] if opts[:filename]
 			@dirname =  File.dirname opts[:filename]  if opts[:filename]
       if opts[:size_in_pixels].nil?
-        @size_in_pixels = "12pt"
+        @size_in_pixels = "14pt"
       else
         @size_in_pixels = size_in_points(opts[:size_in_pixels])
       end
@@ -86,7 +86,7 @@ module LatexToPng
 
       %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert_#{name}.log)
       %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert_#{name}.log)
-      %x(cd #{dirname}; convert #{name}.ps #{name}.png  >> convert_#{name}.log)
+      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert_#{name}.log)
       %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux #{name}.ps)
       png_path = "#{@filename.gsub(/.tex$/,"")}.png"
 
