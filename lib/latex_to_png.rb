@@ -63,15 +63,17 @@ module LatexToPng
       dirname =  File.dirname @filename
       basename = @filename.gsub( /.tex$/,'')
 
-      %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert.log)
-      %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert.log)
-      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert.log)
-      %x(cd #{dirname}; rm #{name}.dvi #{name}.log #{name}.aux #{name}.ps convert.log)
+      %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert_#{name}.log)
+      %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert_#{name}.log)
+      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert_#{name}.log)
+      %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux #{name}.ps)
       png_path = "#{@filename.gsub(/.tex$/,"")}.png"
 
       if File.exist? png_path
+        %x(cd #{dirname}; rm -f convert_#{name}.log)
         @png_file = open(png_path)
       else
+        %x(cp #{tmp_file.path} #{dirname}/origin_#{name}.log)
         raise StandardError
       end
 
