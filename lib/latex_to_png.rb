@@ -49,18 +49,13 @@ module LatexToPng
       end
     end
 
-		def initialize opts={ filename: nil, formula: nil, template_path: nil, size_in_pixels: nil }
+		def initialize opts={ filename: nil, formula: nil, template_path: nil, size: nil }
       
       @filename = opts[:filename]  if opts[:filename]
 			@basename = File.basename opts[:filename].split(".")[0] if opts[:filename]
 			@dirname =  File.dirname opts[:filename]  if opts[:filename]
-      if opts[:size_in_pixels].nil?
-        @size_in_pixels = "14pt"
-      else
-        @size_in_pixels = size_in_points(opts[:size_in_pixels])
-      end
-      
 
+      @size = (opts[:size] || 10).to_i
       @template_path = opts[:template_path] if opts[:template_path]
       @formula = opts[:formula] if opts[:formula]
 		end
@@ -68,7 +63,7 @@ module LatexToPng
 		def to_png
       if @formula
         doc = ERB.new(File.read("#{ROOT_LIB}/templates/equation.erb"))
-        infos = OpenStruct.new({formula: @formula, size: @size_in_pixels })
+        infos = OpenStruct.new({formula: @formula })
         doc = doc.result(infos.instance_eval { binding })
         
         tmp_file = Tempfile.new("formula")
@@ -83,10 +78,11 @@ module LatexToPng
       name = @filename.split("/").last.split(".").first 
       dirname =  File.dirname @filename
       basename = @filename.gsub( /.tex$/,'')
+      density = ((300/10)*@size).to_i
 
       %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert_#{name}.log)
       %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert_#{name}.log)
-      %x(cd #{dirname}; convert -density 200x200 #{name}.ps #{name}.png  >> convert_#{name}.log)
+      %x(cd #{dirname}; convert -density #{density}x#{density} #{name}.ps #{name}.png  >> convert_#{name}.log)
       %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux #{name}.ps)
       png_path = "#{@filename.gsub(/.tex$/,"")}.png"
 
