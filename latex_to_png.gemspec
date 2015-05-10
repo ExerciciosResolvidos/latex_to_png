@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["luizamboni2002@hotmail.com"]
   spec.summary       = %q{Conversor de documentos Latex em imagens}
   spec.description   = %q{Conversor de documentos Latex em imagens, via shell script}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/luizamboni/latex_to_png"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
