@@ -1,8 +1,6 @@
 require "latex_to_png/version"
 require 'tempfile'
 require "erb"
-require 'ostruct'
-
 
 
 #precisa do programa texi2dvi
@@ -23,85 +21,103 @@ begin
     end
 rescue Exception => e
     puts e
-    # raise Gem::Installer::ExtensionBuildError 
+    # raise Gem::Installer::ExtensionBuildError
 end
 
 require "latex_to_png/sizes"
 
 module LatexToPng
-  
 
-
-  ROOT_LIB = File.dirname __FILE__
-
+  Formula = Struct.new(:formula)
 
   class Convert
 
-		attr_accessor :dirname , :filename, :basename, :png_file, :template_path
+		attr_accessor  :filepath
+
+    class << self
+
+      def template
+        return @doc if @doc
+        @doc = ERB.new(File.read("#{ File.dirname __FILE__}/templates/equation.erb"))
+        @doc
+      end
+
+    end
+
+    #or formula or filepath
+		def initialize opts={ filepath: nil, formula: nil, size: nil }
+
+      @filepath = opts[:filepath]  if opts[:filepath]
+      @size = (opts[:size] || 10).to_i
+      @formula = opts[:formula] if opts[:formula]
+
+		end
 
     def size_in_points size_in_pixels
       size = Sizes.invert[size_in_pixels]
-      if size.nil?
-        size_in_points "#{size_in_pixels.to_i + 1}px"
-
-      else
-        size
-      end
+      return (size.nil?)? size_in_points("#{size_in_pixels.to_i + 1}px") : size
     end
 
-		def initialize opts={ filename: nil, formula: nil, template_path: nil, size: nil }
-      
-      @filename = opts[:filename]  if opts[:filename]
-			@basename = File.basename opts[:filename].split(".")[0] if opts[:filename]
-			@dirname =  File.dirname opts[:filename]  if opts[:filename]
+    def from_formula formula, size
 
-      @size = (opts[:size] || 10).to_i
-      @template_path = opts[:template_path] if opts[:template_path]
-      @formula = opts[:formula] if opts[:formula]
-		end
+
+      tmp_file = Tempfile.new("formula")
+      tmp_file.write  mount_tex(formula)
+      tmp_file.close
+      # debugger
+      filepath = tmp_file.path
+
+      convert(filepath,size )
+
+    end
+
+    def mount_tex formula
+       self.class.template.result(Formula.new( formula ).instance_eval { binding })
+    end
+
+
+    def from_estatic filepath, size
+
+      convert(filepath, size )
+    end
+
+    def convert filepath, size,
+      name = filepath.split("/").last.split(".").first
+      dirname =  File.dirname filepath
+      density = ((300/10)*size).to_i
+# debugger
+        #convert for .dvi
+        # dvi to .ps
+        # .ps to .png "q*" option is to run quietly
+
+         %x(
+           cd #{dirname}; latex -halt-on-error #{filepath} &&
+           dvips -q* -E #{name}.dvi &&
+           convert -density #{density}x#{density} #{name}.ps #{name}.png  1>&2 > /dev/null
+           )
+
+         Thread.new {
+            %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux  #{name}.ps &)
+         }.run()
+
+         png_path = "#{filepath.gsub(/.tex$/,"")}.png"
+
+         if File.exist?(png_path)
+           return open(png_path)
+         else
+           raise StandardError("Image not generated")
+         end
+    end
+
 
 		def to_png
       if @formula
-        doc = ERB.new(File.read("#{ROOT_LIB}/templates/equation.erb"))
-        infos = OpenStruct.new({formula: @formula })
-        doc = doc.result(infos.instance_eval { binding })
-        
-        tmp_file = Tempfile.new("formula")
-        tmp_file.write doc
-        tmp_file.close
-        # debugger
-        @filename = tmp_file.path
+        from_formula @formula, @size
+
       else
-        @filename
+        from_estatic @filepath, @size
   	  end
-
-      name = @filename.split("/").last.split(".").first 
-      dirname =  File.dirname @filename
-      basename = @filename.gsub( /.tex$/,'')
-      density = ((300/10)*@size).to_i
-
-      %x(cd #{dirname}; latex -halt-on-error #{@filename} >> convert_#{name}.log)
-      %x(cd #{dirname}; dvips -q* -E #{name}.dvi  >> convert_#{name}.log)
-      %x(cd #{dirname}; convert -density #{density}x#{density} #{name}.ps #{name}.png  >> convert_#{name}.log)
-      %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux #{name}.ps)
-      png_path = "#{@filename.gsub(/.tex$/,"")}.png"
-
-      if File.exist? png_path
-        %x(cd #{dirname}; rm -f convert_#{name}.log)
-        @png_file = open(png_path)
-      else
-        %x(cp #{tmp_file.path} #{dirname}/origin_#{name}.log)
-        raise StandardError
-      end
-
-    end  
-
-  	private
-  	
-  	def move_to_dir
-  		"cd #{@dirname}"
-  	end 
+    end
 
   end
 end
-

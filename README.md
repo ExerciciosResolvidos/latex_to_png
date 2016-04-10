@@ -19,7 +19,15 @@ Or install it yourself as:
 ## External Dependencies
 
 	sudo apt-get install imagemagick libmagickcore-dev
-	
+
 	sudo apt-get install texlive texlive-latex-extra
-	
+
 	sudo apt-get install texinfo
+
+
+## Build and Install From source
+```
+$ cd latex_to_png
+$ gem build latex_to_png.gemspec
+$ gem install latex_to_png
+```

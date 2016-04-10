@@ -1,5 +1,5 @@
 require "latex_to_png"
-require "byebug"
+# require "byebug"
 require 'bundler/setup'
 
 Bundler.setup
