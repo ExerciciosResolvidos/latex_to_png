@@ -89,16 +89,26 @@ module LatexToPng
         #convert for .dvi
         # dvi to .ps
         # .ps to .png "q*" option is to run quietly
+        # %x(
+        #   cd #{dirname}; latex  -halt-on-error  -output-format=pdf #{filepath} &&
+        #   convert -density #{density}x#{density} #{name}.pdf  -trim  #{name}.png  1>&2 > /dev/null
+        #   )
+        #
+        #   Thread.new {
+        #      %x(cd #{dirname}; rm -f  #{name}.log #{name}.pdf #{name}.aux &)
+        #   }.run()
 
          %x(
-           cd #{dirname}; latex -halt-on-error #{filepath} &&
+           cd #{dirname}; latex -halt-on-error  #{filepath} &&
            dvips -q* -E #{name}.dvi &&
            convert -density #{density}x#{density} #{name}.ps #{name}.png  1>&2 > /dev/null
            )
 
-         Thread.new {
-            %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log #{name}.aux  #{name}.ps &)
-         }.run()
+          Thread.new {
+             %x(cd #{dirname}; rm -f #{name}.dvi #{name}.log  #{name}.aux  #{name}.ps &)
+          }.run()
+
+
 
          png_path = "#{filepath.gsub(/.tex$/,"")}.png"
 
