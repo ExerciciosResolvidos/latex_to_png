@@ -21,6 +21,10 @@ Gem::Specification.new do |spec|
   spec.requirements << "latex"
   spec.requirements << "dvips"
   spec.requirements << "imageMagik"
+  spec.requirements << "libmagickcore-dev"
+  spec.requirements << "texlive"
+  spec.requirements << "texlive-latex-extra"
+  spec.requirements << "texinfo"
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"

@@ -3,6 +3,8 @@ require "spec_helper"
 describe "" do
 
 	after(:each) do
+		#  LatexToPng::Convert.memory_dir = "/media/luizamboni/KROSS/latexformulas"
+
 		 %x(rm -Rf #{ROOT_DIR_SPEC}/support/*.png)
 	end
 
@@ -44,7 +46,7 @@ describe "" do
 
 	end
 
-	context "formula usando template" do
+	context "formulas" do
 
 		it "fração simples" do
 
